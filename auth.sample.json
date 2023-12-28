@@ -1,0 +1,8 @@
+{
+  "clientId":"<Discord Client ID>",
+  "clientSecret":"<Discord Client Secret>",
+  "discord":"<Discord Bot Token>",
+  "apiEndpoint":"<API URL>",
+  "mongodb":"<MongoDb Connection String>",
+  "meili":"<Meilisearch URL>"
+}

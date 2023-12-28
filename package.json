@@ -1,0 +1,22 @@
+{
+  "name": "directory-bot",
+  "version": "0.1.0",
+  "description": "Bot to help the internal workings of xiv.directory",
+  "main": "bot.js",
+  "author": "XIV Directory",
+  "dependencies": {
+    "discord.js": "^14.12.1",
+    "meilisearch": "^0.34.1",
+    "mongodb": "^5.8.0"
+  },
+  "devDependencies": {
+    "chai": "^4.3.7",
+    "mocha": "^10.2.0",
+    "sinon": "^15.2.0"
+  },
+  "scripts": {
+    "start": "node bot.js",
+    "start-prod": "pm2 start bot.js -o ../logs/bot.log -e ../logs/bot.err.log --time --name bot",
+    "test": "mocha tests/**/*.js"
+  }
+}
