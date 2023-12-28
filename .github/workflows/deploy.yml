@@ -56,10 +56,4 @@ jobs:
           key: ${{ secrets.DEPLOYMENT_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            cd /root/deploy/bot/
-            pm2 stop bot
-            git fetch origin main
-            git reset --hard FETCH_HEAD
-            git clean -d -f
-            npm install --omit=dev
-            npm run start-prod
+            cd /root/deploy/bot/ && /bin/sh -e scripts/restart-bot.sh
