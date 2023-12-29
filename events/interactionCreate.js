@@ -40,6 +40,11 @@ async function commandInteraction(interaction, client) {
 async function componentInteraction(interaction, client) {
   switch (interaction.customId) {
     case 'invite-channel':
+      if (!interaction.member.permissions.has(PermissionsBitField.Flags.ManageGuild)) {
+        await interaction.reply({ embeds: [common.styledEmbed('Error', 'This can only be used by someone with the "Manage Server" permission')], ephemeral: true });
+        return;
+      }
+    
       var doc = await client.meili.index('listing').search(interaction.guild.id, { attributesToRetrieve: ['id'] });
       if (doc.hits.length) {
         await client.meili.index('listing').updateDocuments([{ id: doc.hits[0].id, defaultInviteChannel: interaction.values[0] }]);
