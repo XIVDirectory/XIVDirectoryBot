@@ -1,5 +1,7 @@
 const { Events } = require('discord.js');
 const applications = require('../applications.js');
+const checkInvite = require ('../commands/checkInvite.js');
+const common = require ('../common.js');
 
 function noSuchCommand(client, interaction) {
   interaction.reply({ content: 'No such command', ephemeral: true })
@@ -36,6 +38,18 @@ async function commandInteraction(interaction, client) {
 }
 
 async function componentInteraction(interaction, client) {
+  switch (interaction.customId) {
+    case 'invite-channel':
+      var doc = await client.meili.index('listing').search(interaction.guild.id, { attributesToRetrieve: ['id'] });
+      if (doc.hits.length) {
+        await client.meili.index('listing').updateDocuments([{ id: doc.hits[0].id, defaultInviteChannel: interaction.values[0] }]);
+        await interaction.deferUpdate();
+        await common.delay(1000); // Meili needs a moment to process the request
+        await checkInvite.processInteraction(interaction, client);
+        return;
+      }
+  }
+
   // Acknolwedge the button press
   if (!interaction.deferred && !interaction.replied) {
     interaction.deferUpdate();
