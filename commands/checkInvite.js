@@ -1,4 +1,4 @@
-const { ApplicationCommandOptionType, PermissionsBitField } = require('discord.js');
+const { ApplicationCommandOptionType, PermissionsBitField, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ActionRowBuilder } = require('discord.js');
 const common = require('../common.js');
 
 module.exports = {
@@ -57,7 +57,13 @@ ${hasChannelPermission ? ":white_check_mark:" : ":x:"} Bot can create invites in
 ${allValid ? ":white_check_mark: Bot can create invites" : ":x: Bot cannot create invites"}
 `
 
-    interaction.editReply({ embeds: [embed] });
+    // Only look for text channels which are visible to the @everyone role
+    var validInviteChannels = guild.channels.cache.filter(x => x.isTextBased() && x.permissionsFor(guild.roles.everyone).has(PermissionsBitField.Flags.ViewChannel)).values();
+    var dropdownRow = new ActionRowBuilder();
+    dropdownRow.addComponents(new StringSelectMenuBuilder().setPlaceholder('Channel for Invites').setCustomId('invite-channel').addOptions(
+      [...validInviteChannels].slice(0, 25).map(channel => new StringSelectMenuOptionBuilder().setLabel(`#${channel.name}`).setValue(channel.id))));
+
+    interaction.editReply({ embeds: [embed], components: [dropdownRow] });
     
     // Try and force an invite refresh
     if (allValid) {
