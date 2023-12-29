@@ -26,9 +26,16 @@ module.exports = {
       embed.description = ":white_check_mark: Bot has access to the server";
     }
     
+    var meiliDoc = await client.meili.index('listing').search(guild.id, { attributesToRetrieve: ['id','serverId','defaultInviteChannel'] })
+      .then(match => match.hits.length === 1 ? match.hits[0] : {});
+    
     var me = await guild.members.fetch(client.user.id)
     var serverPermissions = me.permissions;
-    var targetChannel = guild.rulesChannel ?? guild.channels.cache.find(x => x.isTextBased() && x.viewable);
+    var targetChannel = guild.rulesChannel ?? guild.channels.cache.find(x => x.isTextBased() && x.viewable)
+    if (meiliDoc.defaultInviteChannel) {
+      targetChannel = await guild.channels.fetch(meiliDoc.defaultInviteChannel) ?? targetChannel;
+    }
+
     var channelPermissions = targetChannel.permissionOverwrites
     var botRole = guild.roles.botRoleFor(client.user);
     
@@ -47,7 +54,7 @@ ${hasServerPermission ? ":white_check_mark:" : ":x:"} Bot has "Create Invite" pe
 Attempting to create permissions on #${targetChannel.name} (${targetChannel.id})
 ${canSeeChannel ? ":white_check_mark:" : ":x:"} Bot can see channel
 ${hasChannelPermission ? ":white_check_mark:" : ":x:"} Bot can create invites in channel (one of the following must be true)
-- ${ everyoneChannelPermissions && !everyoneChannelPermissions.deny.has(PermissionsBitField.Flags.CreateInstantInvite) ? ":white_check_mark:" : ":x:"} Permission given to everyone
+- ${ !everyoneChannelPermissions || !everyoneChannelPermissions.deny.has(PermissionsBitField.Flags.CreateInstantInvite) ? ":white_check_mark:" : ":x:"} Permission given to everyone
 - ${ botChannelPermissions && botChannelPermissions.allow.has(PermissionsBitField.Flags.CreateInstantInvite) ? ":white_check_mark:" : ":x:"} Permission given to bot
 ### Overall Summary
 ${allValid ? ":white_check_mark: Bot can create invites" : ":x: Bot cannot create invites"}
@@ -55,21 +62,10 @@ ${allValid ? ":white_check_mark: Bot can create invites" : ":x: Bot cannot creat
 
     // Try and force an invite refresh
     if (allValid) {
-       var match = await client.meili.index('listing').search(guild.id, { attributesToRetrieve: ['id','serverId','isStale'] });
-       if (match.hits.length != 1) {
-         return;
-       }
-       
-       // Check the server is stale
-       var serverMatch = match.hits[0];
-       if (!serverMatch.isStale) {
-         return;
-       }
-       
-       var invite = await common.createInvite(guild);
-       if (invite.url) {
-         await client.meili.index('listing').updateDocuments([{ id: serverMatch.id, status: 2, inviteLink: invite.url }]);
-       }
+     var invite = await common.createInvite(guild, targetChannel);
+     if (invite.url) {
+       await client.meili.index('listing').updateDocuments([{ id: meiliDoc.id, inviteLink: invite.url }]);
+     }
     }
 
     interaction.editReply({ embeds: [embed] });

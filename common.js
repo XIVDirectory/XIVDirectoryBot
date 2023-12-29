@@ -12,11 +12,12 @@ function styledEmbed(title, description, colour) {
     }
 }
 
-async function createInvite(guild) {
+async function createInvite(guild, channel) {
   // NB: If the invite already exists under the same conditions (channel, user, maxAge), then discord just gives us back the same invite unless we specified the "unique" param
   // https://discord.com/developers/docs/resources/channel#create-channel-invite
   try {
-    var availableChannel = guild.rulesChannel ?? guild.channels.cache.find(x => x.isTextBased() && x.viewable)
+    var availableChannel = channel ?? guild.rulesChannel ?? guild.channels.cache.find(x => x.isTextBased() && x.viewable)
+
     if (availableChannel) {
       myInvite = await guild.invites.create(availableChannel, { maxAge: 0, reason: 'XIVDirectory invite' })
       return { url: myInvite.url, guild: myInvite.guild };
@@ -33,8 +34,15 @@ function guildIconUrl(guild) {
   return `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.${(guild.icon.startsWith("a_") ? "gif" : "png")}`
 }
 
+function delay(milliseconds){
+    return new Promise(resolve => {
+        setTimeout(resolve, milliseconds);
+    });
+}
+
 module.exports = {
   styledEmbed: styledEmbed,
   createInvite: createInvite,
-  guildIconUrl: guildIconUrl
+  guildIconUrl: guildIconUrl,
+  delay: delay
 };
