@@ -1,4 +1,4 @@
-const { Events } = require('discord.js');
+const { Events, PermissionsBitField } = require('discord.js');
 const applications = require('../applications.js');
 const checkInvite = require ('../commands/checkInvite.js');
 const common = require ('../common.js');
