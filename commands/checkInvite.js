@@ -21,9 +21,18 @@ module.exports = {
       embed.description = ":white_check_mark: Bot has access to the server";
     }
     
+    var meiliDoc = await client.meili.index('listing').search(guild.id, { attributesToRetrieve: ['id','serverId','isStale','defaultInviteChannel'] })
+      .then(match => match.hits.length === 1 ? match.hits[0] : {});
+    
+    console.log(meiliDoc);
+    
     var me = await guild.members.fetch(client.user.id)
     var serverPermissions = me.permissions;
-    var targetChannel = guild.rulesChannel ?? guild.channels.cache.find(x => x.isTextBased() && x.viewable);
+    var targetChannel = guild.rulesChannel ?? guild.channels.cache.find(x => x.isTextBased() && x.viewable)
+    if (meiliDoc.defaultInviteChannel) {
+      targetChannel = await guild.channels.fetch(meiliDoc.defaultInviteChannel) ?? targetChannel;
+    }
+    
     var channelPermissions = targetChannel.permissionOverwrites
     var botRole = guild.roles.botRoleFor(client.user);
     
@@ -52,20 +61,14 @@ ${allValid ? ":white_check_mark: Bot can create invites" : ":x: Bot cannot creat
     
     // Try and force an invite refresh
     if (allValid) {
-       var match = await client.meili.index('listing').search(guild.id, { attributesToRetrieve: ['id','serverId','isStale'] });
-       if (match.hits.length != 1) {
-         return;
-       }
-       
        // Check the server is stale
-       var serverMatch = match.hits[0];
-       if (!serverMatch.isStale) {
+       if (!meiliDoc || !meiliDoc.isStale) {
          return;
        }
        
        var invite = await common.createInvite(guild);
        if (invite.url) {
-         await client.meili.index('listing').updateDocuments([{ id: serverMatch.id, status: 2, inviteLink: invite.url }]);
+         await client.meili.index('listing').updateDocuments([{ id: meiliDoc.id, status: 2, inviteLink: invite.url }]);
        }
     }
   }
