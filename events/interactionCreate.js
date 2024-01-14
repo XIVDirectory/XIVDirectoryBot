@@ -38,6 +38,14 @@ async function commandInteraction(interaction, client) {
 }
 
 async function componentInteraction(interaction, client) {
+  if (interaction.customId.startsWith('pending-approve-')) {
+    await applications.approve(interaction, interaction.customId.replace('pending-approve-',''));
+    return;
+  } else if (interaction.customId.startsWith('pending-reject-')) {
+    await applications.reject(interaction, interaction.customId.replace('pending-reject-',''));
+    return;
+  }
+  
   switch (interaction.customId) {
     case 'invite-channel':
       if (!interaction.member.permissions.has(PermissionsBitField.Flags.ManageGuild)) {
