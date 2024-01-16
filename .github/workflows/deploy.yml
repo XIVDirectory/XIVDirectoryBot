@@ -22,7 +22,13 @@ jobs:
           node-version: ${{ matrix.node-version }}
       
       - run: npm install
-      - run: npm run test
+
+      - name: Javascript Linter
+        run: |
+          npm -g install eslint && eslint .
+
+      - name: Run tests
+        run: npm run test
      
       - name: Install SSH Key
         if: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
