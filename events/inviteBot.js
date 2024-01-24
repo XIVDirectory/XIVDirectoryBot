@@ -22,7 +22,7 @@ module.exports = {
       InviteLink: myInvite.url,
       MemberCount: guild.memberCount,
       Status: 'SetupRequired',
-      Stale: !myInvite.url,
+      IsStale: !myInvite.url,
       Description: guild.description,
       AgeRating: guild.nsfwLevel == 3 ? 'Adult' : 'Unknown' // Automatically mark "Age restricted" servers as "Adult"
     }
