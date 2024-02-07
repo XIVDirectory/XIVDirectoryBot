@@ -26,7 +26,7 @@ function setup(apiEndpoint) {
   // List of endpoints as methods attached to the "client.api" object
   return {
     status: apiWrapper('api/Status', apiEndpoint),
-    guild: apiWrapper('api/Listing', apiEndpoint, `auth._token.discord=${auth.discord}`),
+    guild: apiWrapper('api/Listing', apiEndpoint, `auth._token.discord=${auth.discord};auth._token.type=bot`),
     search: apiWrapper('api/Search', apiEndpoint)
   };
 }
