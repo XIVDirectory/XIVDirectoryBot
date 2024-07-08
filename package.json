@@ -11,6 +11,7 @@
   },
   "devDependencies": {
     "chai": "^4.3.7",
+    "globals": "^15.8.0",
     "mocha": "^10.2.0",
     "sinon": "^15.2.0"
   },
