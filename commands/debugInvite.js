@@ -64,7 +64,7 @@ ${allValid ? ":white_check_mark: Bot can create invites" : ":x: Bot cannot creat
     if (allValid) {
      var invite = await common.createInvite(guild, targetChannel);
      if (invite.url) {
-       await client.meili.index('listing').updateDocuments([{ id: meiliDoc.id, inviteLink: invite.url }]);
+       await client.meili.index('listing').updateDocuments([{ id: meiliDoc.id, isStale: false, inviteLink: invite.url }]);
      }
     }
 
