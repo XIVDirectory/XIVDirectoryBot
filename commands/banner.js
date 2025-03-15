@@ -8,7 +8,7 @@ module.exports = {
   executeInteraction: async(interaction) => {
     var embed = {
       title: 'Looking for something else?',
-      description: 'Take a look at XIV Directory. Discover new communities and resources for Final Fantasy XIV.,
+      description: 'Take a look at XIV Directory. Discover new communities and resources for Final Fantasy XIV.',
       color: 0xde153a
     };
 
