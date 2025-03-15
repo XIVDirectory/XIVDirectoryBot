@@ -14,6 +14,6 @@ module.exports = {
 
     var row = new ActionRowBuilder().addComponents(new ButtonBuilder().setLabel('XIV Directory').setStyle('Link').setURL('https://xiv.directory'))
 
-    interaction.editReply({ embeds:[embed], components: [row] });
+    interaction.reply({ embeds:[embed], components: [row] });
   }
 };
