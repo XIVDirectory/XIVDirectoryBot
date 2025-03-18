@@ -10,6 +10,11 @@ function apiWrapper(controller, apiEndpoint, cookie) {
       headers: { "Content-Type": "application/json", "Cookie": cookie },
       body: JSON.stringify(body)
     }),
+    put: (body, action) => fetch(action ? `${controllerEndpoint}/${action}` : controllerEndpoint, {
+      method: 'PUT',
+      headers: { "Content-Type": "application/json", "Cookie": cookie },
+      body: JSON.stringify(body)
+    }),
     patch: (id, body, action) => fetch(action ? `${controllerEndpoint}/${action}` : controllerEndpoint, {
       method: 'PATCH',
       headers: { "Content-Type": "application/json", "Cookie": cookie },
@@ -27,6 +32,7 @@ function setup(apiEndpoint) {
   return {
     status: apiWrapper('api/Status', apiEndpoint),
     guild: apiWrapper('api/Listing', apiEndpoint, `auth._token.discord=${auth.discord};auth._token.type=bot`),
+    register: apiWrapper('api/Registration', apiEndpoint, `auth._token.discord=${auth.discord};auth._token.type=bot`),
     search: apiWrapper('api/Search', apiEndpoint)
   };
 }
