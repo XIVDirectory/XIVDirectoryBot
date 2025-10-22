@@ -7,12 +7,15 @@ sinon.stub(console, "error");
 
 describe("Events", () => {
   var fakeGuildEndpoint = {}
-  const dummyClient = { api: { guild: {} }, user: { id: '12345' } };
+  var fakeRegistrationEndpoint = {}
+  const dummyClient = { api: { guild: {}, register: {} }, user: { id: '12345' } };
   var dummyGuild;
   
   beforeEach(() => {
-    fakeGuildEndpoint = { get: sinon.fake(), post: sinon.fake(), patch: sinon.fake(), delete: sinon.fake() };
+    fakeGuildEndpoint = { get: sinon.fake(), post: sinon.fake(), patch: sinon.fake(), put: sinon.fake(), delete: sinon.fake() };
+    fakeRegistrationEndpoint = { get: sinon.fake(), post: sinon.fake(), patch: sinon.fake(), put: sinon.fake(), delete: sinon.fake() };
     dummyClient.api.guild = fakeGuildEndpoint;
+    dummyClient.api.register = fakeRegistrationEndpoint;
     dummyGuild = {
       guildId: 'fakeguildid',
       channels: { cache: { find: sinon.stub().returns({ })}},
@@ -28,7 +31,7 @@ describe("Events", () => {
   
     it("should register the server", async () => {
       await inviteEvent.execute(dummyClient, [dummyGuild]);
-      sinon.assert.calledOnce(fakeGuildEndpoint.post);
+      sinon.assert.calledOnce(fakeRegistrationEndpoint.put);
     });
 
     it("should create a new invite if none exists", async () => {
