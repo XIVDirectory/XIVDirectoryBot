@@ -7,6 +7,8 @@ async function approve(interaction, applicationId) {
     .then(async res => {
       if (res.ok) {
         await interaction.editReply({ embeds: [common.styledEmbed(application.name, `Application for ${application.name} (${applicationId}) was approved by ${interaction.user.tag}`)], components:[]});
+      } else {
+        console.log(res)
       }
     })
     .catch(console.error);
@@ -19,6 +21,8 @@ async function reject(interaction, applicationId) {
     .then(async res => {
       if (res.ok) {
         await interaction.editReply({ embeds: [common.styledEmbed(application.name, `Application for ${application.name} (${applicationId}) was rejected by ${interaction.user.tag}`)], components:[]});
+      } else {
+        console.log(res)
       }
     })
     .catch(console.error);
