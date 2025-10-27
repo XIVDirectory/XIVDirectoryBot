@@ -28,7 +28,7 @@ module.exports = {
     }
     
     try {
-      await client.api.guild.post(newGuild)
+      await client.api.register.put({}, `ApproveServer/${guild.id}`)
         .then(res => { 
           if (res.status == 200) {
             console.log(`Joined guild ${guild.id}`)
