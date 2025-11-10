@@ -17,18 +17,12 @@ module.exports = {
     var newGuild = {
       ServerId: guild.id,
       Owner: guild.ownerId,
-      Name: guild.name,
-      Icon: guild.icon,
       InviteLink: myInvite.url,
-      MemberCount: guild.memberCount,
-      Status: 'SetupRequired',
-      IsStale: !myInvite.url,
-      Description: guild.description,
-      AgeRating: guild.nsfwLevel == 3 ? 'Adult' : 'Unknown' // Automatically mark "Age restricted" servers as "Adult"
+      IsStale: !myInvite.url
     }
     
     try {
-      await client.api.register.put({}, `ApproveServer/${guild.id}`)
+      await client.api.register.put(newGuild, `ApproveServer/${guild.id}`)
         .then(res => { 
           if (res.status == 200) {
             console.log(`Joined guild ${guild.id}`)
